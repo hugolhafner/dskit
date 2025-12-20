@@ -50,10 +50,11 @@ type CircuitBreaker interface {
 var _ CircuitBreaker = (*circuitBreakerImpl)(nil)
 
 type circuitBreakerImpl struct {
-	name    string
-	window  Window
-	config  Config
-	metrics Metrics
+	name   string
+	window Window
+	config Config
+
+	// metrics Metrics
 
 	mu             sync.RWMutex
 	state          State
@@ -112,14 +113,15 @@ func (cb *circuitBreakerImpl) before() error {
 		cb.setStateUnsafe(StateHalfOpen)
 	}
 
-	if cb.state == StateOpen {
+	switch cb.state {
+	case StateOpen:
 		return ErrOpenState
-	} else if cb.state == StateHalfOpen {
+	case StateHalfOpen:
 		if cb.halfOpenLeases <= 0 {
 			return ErrHalfOpenState
 		}
-
 		cb.halfOpenLeases--
+	default:
 	}
 
 	return nil
@@ -129,7 +131,7 @@ func (cb *circuitBreakerImpl) after(result any, err error, duration time.Duratio
 	isFailure := cb.shouldFailCall(result, err)
 	isSlow := duration >= cb.config.SlowCallDurationThreshold
 
-	var outcome = OutcomeSuccess
+	var outcome CallOutcome
 	if isFailure && isSlow {
 		outcome = OutcomeSlowFailure
 	} else if isFailure {
