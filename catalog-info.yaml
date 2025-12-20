@@ -1,0 +1,15 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: dskit
+  description: A golang toolkit for building distributed systems.
+  annotations:
+    github.com/project-slug: hugolhafner/dskit
+    backstage.io/techdocs-ref: dir:./docs
+    sonarqube.org/project-key: hugolhafner_dskit
+  tags:
+    - golang
+spec:
+  type: library
+  lifecycle: experimental
+  owner: user:hugolhafner
