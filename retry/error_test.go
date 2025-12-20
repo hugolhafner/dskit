@@ -285,15 +285,15 @@ func TestAsRetryError(t *testing.T) {
 			got, ok := retry.AsRetryError(tt.err)
 
 			if ok != tt.wantOk {
-				t.Errorf("Asretry.RetryError() ok = %v, want %v", ok, tt.wantOk)
+				t.Errorf("As RetryError() ok = %v, want %v", ok, tt.wantOk)
 			}
 
 			if tt.wantNonNil && got == nil {
-				t.Error("Asretry.RetryError() returned nil, want non-nil")
+				t.Error("As RetryError() returned nil, want non-nil")
 			}
 
 			if !tt.wantNonNil && got != nil {
-				t.Errorf("Asretry.RetryError() returned %v, want nil", got)
+				t.Errorf("As RetryError() returned %v, want nil", got)
 			}
 		})
 	}
