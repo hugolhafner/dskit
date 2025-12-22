@@ -60,13 +60,21 @@ type Metrics interface {
 // NoopMetrics is a no-operation implementation of the Metrics interface
 type NoopMetrics struct{}
 
-func (n *NoopMetrics) RecordStateTransition(ctx context.Context, transition StateTransition) {}
+func (n *NoopMetrics) RecordStateTransition(_ context.Context, _ StateTransition) {
+	// No-op
+}
 
-func (n *NoopMetrics) RecordCallResult(ctx context.Context, result CallResult) {}
+func (n *NoopMetrics) RecordCallResult(_ context.Context, _ CallResult) {
+	// No-op
+}
 
-func (n *NoopMetrics) RecordCallRejection(ctx context.Context, rejection CallRejection) {}
+func (n *NoopMetrics) RecordCallRejection(_ context.Context, _ CallRejection) {
+	// No-op
+}
 
-func (n *NoopMetrics) RecordCallRates(ctx context.Context, rates CallRates) {}
+func (n *NoopMetrics) RecordCallRates(_ context.Context, _ CallRates) {
+	// No-op
+}
 
 // SetGlobalMetrics sets the global Metrics implementation
 func SetGlobalMetrics(m Metrics) {

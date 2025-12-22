@@ -260,7 +260,7 @@ func (m *OTelMetrics) RecordOutcome(ctx context.Context, outcome Outcome) {
 	}
 }
 
-func (m *OTelMetrics) RecordBackoff(ctx context.Context, policyName string, attempt int, duration time.Duration) {
+func (m *OTelMetrics) RecordBackoff(ctx context.Context, policyName string, _ int, duration time.Duration) {
 	m.backoffDuration.Record(ctx, float64(duration.Milliseconds()), metric.WithAttributes(
 		attribute.String("policy", policyName),
 	))

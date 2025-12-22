@@ -92,17 +92,17 @@ type Metrics interface {
 type NoopMetrics struct{}
 
 // RecordAttempt is a no-op implementation
-func (n *NoopMetrics) RecordAttempt(ctx context.Context, result Attempt) {
+func (n *NoopMetrics) RecordAttempt(_ context.Context, _ Attempt) {
 	// No operation
 }
 
 // RecordOutcome is a no-op implementation
-func (n *NoopMetrics) RecordOutcome(ctx context.Context, outcome Outcome) {
+func (n *NoopMetrics) RecordOutcome(_ context.Context, _ Outcome) {
 	// No operation
 }
 
 // RecordBackoff is a no-op implementation
-func (n *NoopMetrics) RecordBackoff(ctx context.Context, policyName string, attempt int, duration time.Duration) {
+func (n *NoopMetrics) RecordBackoff(_ context.Context, _ string, _ int, _ time.Duration) {
 	// No operation
 }
 
