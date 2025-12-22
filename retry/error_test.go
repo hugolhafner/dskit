@@ -430,14 +430,6 @@ func TestIsResultPredicateRetry(t *testing.T) {
 	}
 }
 
-func TestRetryError_ImplementsErrorInterface(t *testing.T) {
-	var _ error = (*retry.RetryError)(nil)
-}
-
-func TestValidationError_ImplementsErrorInterface(t *testing.T) {
-	var _ error = (*retry.ValidationError)(nil)
-}
-
 func TestRetryError_ErrorsAs(t *testing.T) {
 	original := &retry.RetryError{
 		Attempts: []retry.Attempt{{Number: 1, Error: errors.New("test")}},

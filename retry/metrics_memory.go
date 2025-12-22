@@ -26,7 +26,7 @@ func NewInMemoryMetrics() *InMemoryMetrics {
 	return &InMemoryMetrics{}
 }
 
-func (m *InMemoryMetrics) RecordAttempt(ctx context.Context, attempt Attempt) {
+func (m *InMemoryMetrics) RecordAttempt(_ context.Context, attempt Attempt) {
 	m.attemptsTotal.Add(1)
 	if attempt.IsSuccess() {
 		m.attemptsSuccess.Add(1)
@@ -36,7 +36,7 @@ func (m *InMemoryMetrics) RecordAttempt(ctx context.Context, attempt Attempt) {
 	m.attemptsDurationTotal.Add(attempt.Duration.Milliseconds())
 }
 
-func (m *InMemoryMetrics) RecordOutcome(ctx context.Context, outcome Outcome) {
+func (m *InMemoryMetrics) RecordOutcome(_ context.Context, outcome Outcome) {
 	m.outcomeTotal.Add(1)
 	if outcome.IsSuccess() {
 		m.outcomeSuccess.Add(1)
@@ -46,7 +46,7 @@ func (m *InMemoryMetrics) RecordOutcome(ctx context.Context, outcome Outcome) {
 	m.outcomeDurationTotal.Add(outcome.TotalDuration.Milliseconds())
 }
 
-func (m *InMemoryMetrics) RecordBackoff(ctx context.Context, policyName string, attempt int, duration time.Duration) {
+func (m *InMemoryMetrics) RecordBackoff(_ context.Context, _ string, _ int, duration time.Duration) {
 	m.backoffDurationTotal.Add(duration.Milliseconds())
 }
 
