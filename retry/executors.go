@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"time"
+
+	"github.com/hugolhafner/dskit/circuitbreaker"
 )
 
 type waiter func(time.Duration) error
@@ -199,6 +201,19 @@ func Do(ctx context.Context, p *Policy, fn func(context.Context) error) error {
 	return err
 }
 
+func DoWithCircuit(ctx context.Context, p *Policy, cb circuitbreaker.CircuitBreaker, fn func(context.Context) error) error {
+	_, err := ExecuteWithCircuit(ctx, p, cb, func(ctx context.Context) (struct{}, error) {
+		return struct{}{}, fn(ctx)
+	})
+	return err
+}
+
 func Execute[T any](ctx context.Context, p *Policy, fn func(context.Context) (T, error)) (T, error) {
 	return execute(ctx, p, contextWaiter(ctx), fn)
+}
+
+func ExecuteWithCircuit[T any](ctx context.Context, p *Policy, cb circuitbreaker.CircuitBreaker, fn func(context.Context) (T, error)) (T, error) {
+	return execute(ctx, p, contextWaiter(ctx), func(ctx context.Context) (T, error) {
+		return circuitbreaker.Execute[T](ctx, cb, fn)
+	})
 }
