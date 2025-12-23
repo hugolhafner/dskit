@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/hugolhafner/dskit/compare/v0.2.1...v0.3.0) (2025-12-23)
+
+
+### Features
+
+* **retry:** add Do and Execute with Circuit ([#8](https://github.com/hugolhafner/dskit/issues/8)) ([2a54da9](https://github.com/hugolhafner/dskit/commit/2a54da9de455143fb2bfd5a39933e5299dfe554a))
+
 ## [0.2.1](https://github.com/hugolhafner/dskit/compare/v0.2.0...v0.2.1) (2025-12-22)
 
 
