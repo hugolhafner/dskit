@@ -7,6 +7,8 @@ import (
 type Config struct {
 	Window Window
 
+	Metrics Metrics
+
 	// MinimumNumberOfCalls is the minimum number of calls required before
 	// the circuit breaker evaluates the failure rate and slow call rate
 	MinimumNumberOfCalls int
@@ -45,6 +47,12 @@ func defaultConfig() Config {
 		SlowCallDurationThreshold:             10 * time.Second,
 		PermittedNumberOfCallsInHalfOpenState: 10,
 		WaitDurationInOpenState:               60 * time.Second,
+	}
+}
+
+func WithMetrics(metrics Metrics) Option {
+	return func(c *Config) {
+		c.Metrics = metrics
 	}
 }
 

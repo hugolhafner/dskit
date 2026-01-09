@@ -72,15 +72,15 @@ func (w *CountWindow) Reset() {
 	w.slowCallCount = 0
 }
 
-func (w *CountWindow) CallRates() (float64, float64, float64) {
+func (w *CountWindow) CallRates() (int, float64, float64, float64) {
 	totalCalls := w.Size()
 	if totalCalls == 0 {
-		return 0, 0, 0
+		return 0, 0, 0, 0
 	}
 
 	successRate := (float64(w.successCount) / float64(totalCalls)) * 100
 	failureRate := (float64(w.failureCount) / float64(totalCalls)) * 100
 	slowCallRate := (float64(w.slowCallCount) / float64(totalCalls)) * 100
 
-	return successRate, failureRate, slowCallRate
+	return totalCalls, successRate, failureRate, slowCallRate
 }
