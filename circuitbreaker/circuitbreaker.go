@@ -1,6 +1,7 @@
 package circuitbreaker
 
 import (
+	"context"
 	"errors"
 	"sync"
 	"time"
@@ -54,7 +55,7 @@ type circuitBreakerImpl struct {
 	window Window
 	config Config
 
-	// metrics Metrics
+	metrics Metrics
 
 	mu             sync.RWMutex
 	state          State
@@ -69,8 +70,6 @@ func New(name string, opts ...Option) CircuitBreaker {
 	for _, opt := range opts {
 		opt(&config)
 	}
-
-	// TODO: Metrics
 
 	return &circuitBreakerImpl{
 		name:   name,
@@ -95,6 +94,8 @@ func (cb *circuitBreakerImpl) setStateUnsafe(state State) {
 		return
 	}
 
+	oldState := cb.state
+
 	if state == StateHalfOpen {
 		cb.halfOpenLeases = cb.config.PermittedNumberOfCallsInHalfOpenState
 		cb.halfOpenCompletedLeases = 0
@@ -103,6 +104,13 @@ func (cb *circuitBreakerImpl) setStateUnsafe(state State) {
 	cb.state = state
 	cb.transitionTime = time.Now()
 	cb.window.Reset()
+
+	cb.metricsReporter().RecordStateTransition(context.Background(), StateTransition{
+		Name:      cb.name,
+		FromState: oldState,
+		ToState:   state,
+		Timestamp: cb.transitionTime,
+	})
 }
 
 func (cb *circuitBreakerImpl) before() error {
@@ -115,9 +123,20 @@ func (cb *circuitBreakerImpl) before() error {
 
 	switch cb.state {
 	case StateOpen:
+		cb.metricsReporter().RecordCallRejection(context.Background(), CallRejection{
+			Name:  cb.name,
+			State: StateOpen,
+			Error: ErrOpenState,
+		})
 		return ErrOpenState
 	case StateHalfOpen:
 		if cb.halfOpenLeases <= 0 {
+			cb.metricsReporter().RecordCallRejection(context.Background(), CallRejection{
+				Name:  cb.name,
+				State: StateHalfOpen,
+				Error: ErrHalfOpenState,
+			})
+
 			return ErrHalfOpenState
 		}
 		cb.halfOpenLeases--
@@ -152,6 +171,22 @@ func (cb *circuitBreakerImpl) after(result any, err error, duration time.Duratio
 	}
 
 	cb.evaluateStateTransitionUnsafe()
+
+	cb.metricsReporter().RecordCallResult(context.Background(), CallResult{
+		Name:     cb.name,
+		Outcome:  outcome,
+		Duration: duration,
+		Error:    err,
+	})
+
+	totalCalls, successRate, failureRate, slowRate := cb.window.CallRates()
+	cb.metricsReporter().RecordCallRates(context.Background(), CallRates{
+		Name:         cb.name,
+		SuccessRate:  successRate,
+		FailureRate:  failureRate,
+		SlowCallRate: slowRate,
+		TotalCalls:   totalCalls,
+	})
 }
 
 func (cb *circuitBreakerImpl) evaluateStateTransitionUnsafe() {
@@ -173,7 +208,7 @@ func (cb *circuitBreakerImpl) evaluateStateTransitionUnsafe() {
 }
 
 func (cb *circuitBreakerImpl) areThresholdsExceededUnsafe() bool {
-	_, failureRate, slowRate := cb.window.CallRates()
+	_, _, failureRate, slowRate := cb.window.CallRates()
 	return failureRate >= cb.config.FailureRateThreshold || slowRate >= cb.config.SlowCallRateThreshold
 }
 
@@ -203,4 +238,12 @@ func (cb *circuitBreakerImpl) shouldFailCall(result any, err error) bool {
 	}
 
 	return false
+}
+
+func (cb *circuitBreakerImpl) metricsReporter() Metrics {
+	if cb.metrics != nil {
+		return cb.metrics
+	}
+
+	return GetGlobalMetrics()
 }

@@ -8,7 +8,7 @@ import (
 
 var _ Metrics = (*NoopMetrics)(nil)
 
-var _globalMetrics = atomic.Value{}
+var _globalMetrics atomic.Pointer[Metrics]
 
 // StateTransition represents a circuit breaker state change
 type StateTransition struct {
@@ -81,7 +81,8 @@ func SetGlobalMetrics(m Metrics) {
 	if m == nil {
 		m = &NoopMetrics{}
 	}
-	_globalMetrics.Store(m)
+
+	_globalMetrics.Store(&m)
 }
 
 // GetGlobalMetrics returns the global Metrics implementation
@@ -90,5 +91,5 @@ func GetGlobalMetrics() Metrics {
 	if m == nil {
 		return &NoopMetrics{}
 	}
-	return m.(Metrics)
+	return *m
 }
