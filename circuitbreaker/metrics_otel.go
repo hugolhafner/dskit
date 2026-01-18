@@ -217,9 +217,11 @@ func (m *OTelMetrics) RecordStateTransition(ctx context.Context, transition Stat
 	}
 
 	m.stateTransitionsTotal.Add(ctx, 1, metric.WithAttributes(attrs...))
-	m.currentState.Record(ctx, int64(transition.ToState), metric.WithAttributes(
-		attribute.String("name", transition.Name),
-	))
+	m.currentState.Record(
+		ctx, int64(transition.ToState), metric.WithAttributes(
+			attribute.String("name", transition.Name),
+		),
+	)
 }
 
 func (m *OTelMetrics) RecordCallResult(ctx context.Context, result CallResult) {

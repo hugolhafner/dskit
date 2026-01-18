@@ -40,6 +40,7 @@ type Option func(*Config)
 
 func defaultConfig() Config {
 	return Config{
+		Metrics:                               GetGlobalMetrics(),
 		Window:                                NewCountWindow(100),
 		MinimumNumberOfCalls:                  20,
 		FailureRateThreshold:                  50.0,
