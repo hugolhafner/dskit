@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/hugolhafner/dskit/compare/v0.3.0...v0.3.1) (2026-01-09)
+
+
+### Bug Fixes
+
+* **retry:** merge option arrays ([#13](https://github.com/hugolhafner/dskit/issues/13)) ([d623d96](https://github.com/hugolhafner/dskit/commit/d623d96ec39d9f206b41943e248c256988575033))
+
 ## [0.3.0](https://github.com/hugolhafner/dskit/compare/v0.2.1...v0.3.0) (2025-12-23)
 
 

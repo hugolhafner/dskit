@@ -87,13 +87,13 @@ func WithRetryOnErrorPredicate(predicate func(error) bool) Option {
 
 func WithRetryErrors(errors ...error) Option {
 	return func(p *Policy) {
-		p.retryErrors = errors
+		p.retryErrors = append(p.retryErrors, errors...)
 	}
 }
 
 func WithIgnoreErrors(errors ...error) Option {
 	return func(p *Policy) {
-		p.ignoreErrors = errors
+		p.ignoreErrors = append(p.ignoreErrors, errors...)
 	}
 }
 
