@@ -144,7 +144,7 @@ func NewOTelMetrics(opts ...OTelOption) (*OTelMetrics, error) {
 
 	currentState, err := meter.Int64Gauge(
 		cfg.MetricPrefix+"state",
-		metric.WithDescription("Current state of the circuit breaker (0=closed, 1=half_open, 2=open, 3=metrics_only)"),
+		metric.WithDescription("Current state of the circuit breaker"),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create state gauge: %w", err)
@@ -217,9 +217,21 @@ func (m *OTelMetrics) RecordStateTransition(ctx context.Context, transition Stat
 	}
 
 	m.stateTransitionsTotal.Add(ctx, 1, metric.WithAttributes(attrs...))
-	m.currentState.Record(ctx, int64(transition.ToState), metric.WithAttributes(
-		attribute.String("name", transition.Name),
-	))
+
+	for state := StateClosed; state <= StateMetricsOnly; state++ {
+		var value int64
+		if state == transition.ToState {
+			value = 1
+		} else {
+			value = 0
+		}
+
+		m.currentState.Record(
+			ctx, value, metric.WithAttributes(
+				attribute.String("name", transition.Name), attribute.String("state", stateString(state)),
+			),
+		)
+	}
 }
 
 func (m *OTelMetrics) RecordCallResult(ctx context.Context, result CallResult) {
