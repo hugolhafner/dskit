@@ -9,6 +9,10 @@ type Config struct {
 
 	Metrics Metrics
 
+	// MetricsOnlyMode starts the circuit breaker in metrics only mode,
+	// where it does not block any calls but still collects metrics
+	MetricsOnlyMode bool
+
 	// MinimumNumberOfCalls is the minimum number of calls required before
 	// the circuit breaker evaluates the failure rate and slow call rate
 	MinimumNumberOfCalls int
@@ -40,14 +44,20 @@ type Option func(*Config)
 
 func defaultConfig() Config {
 	return Config{
-		Metrics:                               GetGlobalMetrics(),
 		Window:                                NewCountWindow(100),
+		MetricsOnlyMode:                       false,
 		MinimumNumberOfCalls:                  20,
 		FailureRateThreshold:                  50.0,
 		SlowCallRateThreshold:                 50.0,
 		SlowCallDurationThreshold:             10 * time.Second,
 		PermittedNumberOfCallsInHalfOpenState: 10,
 		WaitDurationInOpenState:               60 * time.Second,
+	}
+}
+
+func WithMetricsOnlyMode() Option {
+	return func(c *Config) {
+		c.MetricsOnlyMode = true
 	}
 }
 

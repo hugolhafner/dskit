@@ -71,10 +71,15 @@ func New(name string, opts ...Option) CircuitBreaker {
 		opt(&config)
 	}
 
+	initialState := StateClosed
+	if config.MetricsOnlyMode {
+		initialState = StateMetricsOnly
+	}
+
 	return &circuitBreakerImpl{
 		name:    name,
 		config:  config,
-		state:   StateClosed,
+		state:   initialState,
 		window:  config.Window,
 		metrics: config.Metrics,
 	}
@@ -119,6 +124,10 @@ func (cb *circuitBreakerImpl) setStateUnsafe(state State) {
 func (cb *circuitBreakerImpl) before() error {
 	cb.mu.Lock()
 	defer cb.mu.Unlock()
+
+	if cb.state == StateMetricsOnly {
+		return nil
+	}
 
 	if cb.state == StateOpen && time.Since(cb.transitionTime) >= cb.config.WaitDurationInOpenState {
 		cb.setStateUnsafe(StateHalfOpen)
@@ -173,11 +182,14 @@ func (cb *circuitBreakerImpl) after(result any, err error, duration time.Duratio
 
 	cb.window.RecordOutcome(outcome)
 
-	if cb.state == StateHalfOpen && !IsCallNotPermittedError(err) {
-		cb.halfOpenCompletedLeases++
-	}
+	// MetricsOnly mode: record metrics but skip state transition evaluation
+	if cb.state != StateMetricsOnly {
+		if cb.state == StateHalfOpen && !IsCallNotPermittedError(err) {
+			cb.halfOpenCompletedLeases++
+		}
 
-	cb.evaluateStateTransitionUnsafe()
+		cb.evaluateStateTransitionUnsafe()
+	}
 
 	cb.metricsReporter().RecordCallResult(
 		context.Background(), CallResult{
@@ -201,6 +213,10 @@ func (cb *circuitBreakerImpl) after(result any, err error, duration time.Duratio
 }
 
 func (cb *circuitBreakerImpl) evaluateStateTransitionUnsafe() {
+	if cb.state == StateMetricsOnly {
+		return
+	}
+
 	switch cb.state {
 	case StateClosed:
 		if cb.window.Size() >= cb.config.MinimumNumberOfCalls && cb.areThresholdsExceededUnsafe() {
