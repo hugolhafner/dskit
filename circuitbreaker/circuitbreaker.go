@@ -76,13 +76,16 @@ func New(name string, opts ...Option) CircuitBreaker {
 		initialState = StateMetricsOnly
 	}
 
-	return &circuitBreakerImpl{
+	cb := &circuitBreakerImpl{
 		name:    name,
 		config:  config,
-		state:   initialState,
+		state:   StateOpen,
 		window:  config.Window,
 		metrics: config.Metrics,
 	}
+	cb.setStateUnsafe(initialState)
+
+	return cb
 }
 
 func (cb *circuitBreakerImpl) Name() string {

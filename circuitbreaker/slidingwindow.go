@@ -14,7 +14,7 @@ type Window interface {
 
 	RecordOutcome(CallOutcome)
 
-	// CallRates returns the success rate, failure rate, and slow call rate in percentage.
+	// CallRates returns the total calls, success rate, failure rate, and slow call rate in percentage.
 	CallRates() (int, float64, float64, float64)
 
 	Reset()

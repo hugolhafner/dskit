@@ -78,9 +78,9 @@ func (w *CountWindow) CallRates() (int, float64, float64, float64) {
 		return 0, 0, 0, 0
 	}
 
-	successRate := (float64(w.successCount) / float64(totalCalls)) * 100
-	failureRate := (float64(w.failureCount) / float64(totalCalls)) * 100
-	slowCallRate := (float64(w.slowCallCount) / float64(totalCalls)) * 100
+	successRate := float64(w.successCount) / float64(totalCalls)
+	failureRate := float64(w.failureCount) / float64(totalCalls)
+	slowCallRate := float64(w.slowCallCount) / float64(totalCalls)
 
 	return totalCalls, successRate, failureRate, slowCallRate
 }
