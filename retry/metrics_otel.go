@@ -222,22 +222,38 @@ func NewOTelMetrics(opts ...OTelOption) (*OTelMetrics, error) {
 	}, nil
 }
 
+func MustNewOTelMetrics(opts ...OTelOption) *OTelMetrics {
+	m, err := NewOTelMetrics(opts...)
+	if err != nil {
+		panic(err)
+	}
+
+	return m
+}
+
 func (m *OTelMetrics) RecordAttempt(ctx context.Context, attempt Attempt) {
 	baseAttrs := []attribute.KeyValue{
 		attribute.String("policy", attempt.PolicyName),
 	}
 
 	m.attemptsTotal.Add(ctx, 1, metric.WithAttributes(baseAttrs...))
-	m.attemptsDuration.Record(ctx, float64(attempt.Duration.Milliseconds()),
-		metric.WithAttributes(append(baseAttrs, attribute.String("status", string(attempt.Status)))...))
+	m.attemptsDuration.Record(
+		ctx, float64(attempt.Duration.Milliseconds()),
+		metric.WithAttributes(append(baseAttrs, attribute.String("status", string(attempt.Status)))...),
+	)
 
 	if attempt.IsSuccess() {
 		m.attemptsSuccess.Add(ctx, 1, metric.WithAttributes(baseAttrs...))
 	} else {
-		m.attemptsFailure.Add(ctx, 1, metric.WithAttributes(append(baseAttrs,
-			attribute.String("reason", string(attempt.FailureReason)),
-			attribute.Bool("retryable", attempt.Retryable),
-		)...))
+		m.attemptsFailure.Add(
+			ctx, 1, metric.WithAttributes(
+				append(
+					baseAttrs,
+					attribute.String("reason", string(attempt.FailureReason)),
+					attribute.Bool("retryable", attempt.Retryable),
+				)...,
+			),
+		)
 	}
 }
 
@@ -248,20 +264,29 @@ func (m *OTelMetrics) RecordOutcome(ctx context.Context, outcome Outcome) {
 
 	m.outcomeTotal.Add(ctx, 1, metric.WithAttributes(baseAttrs...))
 	m.outcomeAttemptsBucket.Record(ctx, int64(outcome.TotalAttempts), metric.WithAttributes(baseAttrs...))
-	m.outcomeDuration.Record(ctx, float64(outcome.TotalDuration.Milliseconds()),
-		metric.WithAttributes(append(baseAttrs, attribute.String("status", string(outcome.Status)))...))
+	m.outcomeDuration.Record(
+		ctx, float64(outcome.TotalDuration.Milliseconds()),
+		metric.WithAttributes(append(baseAttrs, attribute.String("status", string(outcome.Status)))...),
+	)
 
 	if outcome.IsSuccess() {
 		m.outcomeSuccess.Add(ctx, 1, metric.WithAttributes(baseAttrs...))
 	} else {
-		m.outcomeFailure.Add(ctx, 1, metric.WithAttributes(append(baseAttrs,
-			attribute.String("reason", string(outcome.FailureReason)),
-		)...))
+		m.outcomeFailure.Add(
+			ctx, 1, metric.WithAttributes(
+				append(
+					baseAttrs,
+					attribute.String("reason", string(outcome.FailureReason)),
+				)...,
+			),
+		)
 	}
 }
 
 func (m *OTelMetrics) RecordBackoff(ctx context.Context, policyName string, _ int, duration time.Duration) {
-	m.backoffDuration.Record(ctx, float64(duration.Milliseconds()), metric.WithAttributes(
-		attribute.String("policy", policyName),
-	))
+	m.backoffDuration.Record(
+		ctx, float64(duration.Milliseconds()), metric.WithAttributes(
+			attribute.String("policy", policyName),
+		),
+	)
 }
