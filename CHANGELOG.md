@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/hugolhafner/dskit/compare/v0.3.1...v0.4.0) (2026-06-16)
+
+
+### Features
+
+* **circuitbreaker:** metrics init ([#10](https://github.com/hugolhafner/dskit/issues/10)) ([a62e92c](https://github.com/hugolhafner/dskit/commit/a62e92c92efdbf3c41de58eed8c093c230f407e8))
+
 ## [0.3.1](https://github.com/hugolhafner/dskit/compare/v0.3.0...v0.3.1) (2026-01-09)
 
 
