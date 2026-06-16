@@ -179,6 +179,15 @@ func NewOTelMetrics(opts ...OTelOption) (*OTelMetrics, error) {
 	}, nil
 }
 
+func MustNewOTelMetrics(opts ...OTelOption) *OTelMetrics {
+	m, err := NewOTelMetrics(opts...)
+	if err != nil {
+		panic(err)
+	}
+
+	return m
+}
+
 func outcomeString(outcome CallOutcome) string {
 	switch outcome {
 	case OutcomeSuccess:
