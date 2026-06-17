@@ -1,0 +1,71 @@
+# Metrics
+
+## Retry
+
+- `retry_attempts_total` - Total number of retry attempts made
+    - `policy` - Name of the retry policy
+- `retry_attempts_success_total` - Total number of successful retry attempts
+    - `policy` - Name of the retry policy
+- `retry_attempts_failure_total` - Total number of failed retry attempts
+    - `policy` - Name of the retry policy
+    - `reason` - Failure reason
+    - `retryable` - Whether the attempt is retryable (`true`/`false`)
+- `retry_attempts_duration_milliseconds` - Duration of retry attempts in milliseconds
+    - `policy` - Name of the retry policy
+    - `status` - Attempt status
+- `retry_attempts_buckets` - Buckets for retry attempt counts
+    - `policy` - Name of the retry policy
+- `retry_outcome_total` - Total number of retry outcomes
+    - `policy` - Name of the retry policy
+- `retry_outcome_success_total` - Total number of successful retry outcomes
+    - `policy` - Name of the retry policy
+- `retry_outcome_failure_total` - Total number of failed retry outcomes
+    - `policy` - Name of the retry policy
+    - `reason` - Failure reason
+- `retry_outcome_duration_milliseconds` - Duration of retry outcome in milliseconds
+    - `policy` - Name of the retry policy
+    - `status` - Outcome status
+- `retry_backoff_duration_milliseconds` - Duration of backoff periods in milliseconds
+    - `policy` - Name of the retry policy
+
+## Circuit Breaker
+
+- `circuitbreaker_calls_total` - Total number of calls through the circuit breaker
+    - `name` - Name of the circuit breaker
+    - `outcome` - Call outcome
+        - `success`
+        - `failure`
+        - `slow_success`
+        - `slow_failure`
+- `circuitbreaker_calls_duration_milliseconds` - Duration of calls in milliseconds
+    - `name` - Name of the circuit breaker
+    - `outcome` - Call outcome
+        - `success`
+        - `failure`
+        - `slow_success`
+        - `slow_failure`
+- `circuitbreaker_rejections_total` - Total number of rejected calls
+    - `name` - Name of the circuit breaker
+    - `state` - Current state when rejection occurred
+        - `closed`
+        - `half_open`
+        - `open`
+        - `metrics_only`
+- `circuitbreaker_state_transitions_total` - Total number of state transitions
+    - `name` - Name of the circuit breaker
+    - `from_state` - Previous state
+        - `closed`
+        - `half_open`
+        - `open`
+        - `metrics_only`
+    - `to_state` - New state
+        - `closed`
+        - `half_open`
+        - `open`
+        - `metrics_only`
+- `circuitbreaker_state` - Current state of the circuit breaker (0=closed, 1=half_open, 2=open, 3=metrics_only)
+    - `name` - Name of the circuit breaker
+- `circuitbreaker_failure_rate` - Current failure rate percentage
+    - `name` - Name of the circuit breaker
+- `circuitbreaker_slow_call_rate` - Current slow call rate percentage
+    - `name` - Name of the circuit breaker
