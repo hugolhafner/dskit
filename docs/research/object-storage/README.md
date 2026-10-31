@@ -11,4 +11,6 @@ One document per system, focused on how each stores, retrieves and manipulates d
 | WarpStream | Closed (blog posts, docs) | [warpstream.md](warpstream.md) |
 | ClickHouse | Open source (C++) | [clickhouse.md](clickhouse.md) |
 
+**Cross-system synthesis:** [synthesis.md](synthesis.md) compares the six systems. It covers common patterns, patterns specific to each modality, where the systems differ, the most interesting approach in each, convergent trends, and a design guide.
+
 The documents on closed-source systems label each claim as stated by the vendor or inferred.
