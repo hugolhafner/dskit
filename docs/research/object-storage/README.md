@@ -16,3 +16,5 @@ One document per system, focused on how each stores, retrieves and manipulates d
 The documents on closed-source systems label each claim as stated by the vendor or inferred.
 
 **Design sketch:** [design-event-store.md](design-event-store.md) applies these lessons to a proposed architecture for a new schemaless store for logs, traces and wide events. It covers components, the segment file format, the catalog keyspace, write, compaction and read paths, lifecycle, caching, sizing and failure modes.
+
+**Husky rebuild:** [husky-reconstruction.md](husky-reconstruction.md) designs a complete system in Husky's mould from the public facts. It covers ingest routing and exactly-once commits, the fragment and segment byte layouts, the FoundationDB keyspace, compaction, query processing, caching, deletes and GC, and sizing. Every choice is labelled as known, reconstructed or invented.
