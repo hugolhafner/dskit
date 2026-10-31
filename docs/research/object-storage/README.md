@@ -14,3 +14,5 @@ One document per system, focused on how each stores, retrieves and manipulates d
 **Cross-system synthesis:** [synthesis.md](synthesis.md) compares the six systems. It covers common patterns, patterns specific to each modality, where the systems differ, the most interesting approach in each, convergent trends, and a design guide.
 
 The documents on closed-source systems label each claim as stated by the vendor or inferred.
+
+**Design sketch:** [design-event-store.md](design-event-store.md) applies these lessons to a proposed architecture for a new schemaless store for logs, traces and wide events. It covers components, the segment file format, the catalog keyspace, write, compaction and read paths, lifecycle, caching, sizing and failure modes.
